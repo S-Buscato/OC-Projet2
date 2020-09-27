@@ -1,56 +1,49 @@
 package com.hemebiotech.analytics;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+
 import java.io.FileWriter;
 import java.util.ArrayList;
-
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Open and read symptoms.txt file. Each line will be add in a List. Then, each item
+ * will be count and sort by alphabetical order. In the last step, every symptoms will be write in
+ * an ouput file named result.out.
+ *
+ */
 public class AnalyticsCounter {
-	
 
 	public static void main(String args[]) throws Exception {
-		BufferedReader reader = new BufferedReader(new FileReader("symptoms.txt"));
-		String line = reader.readLine();
 
-		int i = 0;
+		try {
+			// read source file 
+			ReadSymptomDataFromFile read = new ReadSymptomDataFromFile("symptoms.txt");
+			List<String> sympList = read.GetSymptoms();
 
-		List<String> sympList = new ArrayList<String>();
+			// transform list to Map 
+			Map<String, Integer> symptoms = new TransformListToMap().listToMap(sympList);
+			
+			// create the result file from map 
+			List<String> lst = new ArrayList<String>();		
+			FileWriter writer = new FileWriter("result.out");
 
-		while (line != null) {
-			i++;
-			sympList.add(line);
-			line = reader.readLine(); // get another symptom
+			for (Map.Entry<String, Integer> entry : symptoms.entrySet() ) {
+				lst.add((entry.getKey() + " : " + entry.getValue()));
+			}
+
+			Collections.sort(lst);
+			for (String ls : lst) {
+				writer.write(ls + "\n");
+			}
+
+			writer.close();
+
+		} catch (Exception e) {
+			System.out.println("exception : " + e);
+
 		}
-
-		
-		Map<String, Integer> nbSymptoms = new HashMap<String, Integer>();
-		List<String> lst = new ArrayList<String>();
-
-		String n = null;
-		int count = 0;
-		for (String name : sympList) {
-			n = name;
-			count = Collections.frequency(sympList, name);
-			nbSymptoms.put(n, count);
-		}
-
-		// generate output
-		FileWriter writer = new FileWriter("result.out");
-		
-		for(Map.Entry<String, Integer> entry : nbSymptoms.entrySet()){
-			lst.add((entry.getKey() +" : " + entry.getValue()));
-		}
-		
-		Collections.sort(lst);
-		for (String ls : lst) {
-			writer.write(ls + "\n");
-		}
-
-		writer.close();
 	}
+
 }

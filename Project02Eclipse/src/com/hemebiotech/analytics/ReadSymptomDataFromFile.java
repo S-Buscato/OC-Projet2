@@ -5,11 +5,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Simple brute force implementation
  *
  */
+
 public class ReadSymptomDataFromFile implements ISymptomReader {
 
 	private String filepath;
@@ -23,7 +26,7 @@ public class ReadSymptomDataFromFile implements ISymptomReader {
 	}
 	
 	@Override
-	public List<String> GetSymptoms() {
+	public List<String> getSymptoms() {
 		ArrayList<String> result = new ArrayList<String>();
 		
 		if (filepath != null) {
@@ -42,6 +45,23 @@ public class ReadSymptomDataFromFile implements ISymptomReader {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * transform a list to map. This map is sorted
+	 * @param sympList
+	 *
+	 */
+	public Map<String, Integer> listToMap(List<String> sympList) {
+		TreeMap<String, Integer> nbSymptoms = new TreeMap<String, Integer>();
+
+		for (String name : sympList) {
+			nbSymptoms.putIfAbsent(name, 0);
+			nbSymptoms.put(name, nbSymptoms.get(name)+1);
+		}
+		
+		nbSymptoms.subMap("a","b");
+		return nbSymptoms;
 	}
 
 }
